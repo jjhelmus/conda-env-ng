@@ -2,31 +2,20 @@ from argparse import ArgumentParser
 
 from conda import plugins
 
-from conda.cli.helpers import add_parser_prefix
+from conda.base.context import context, determine_target_prefix, env_name
+from .env import from_environment
 
 from typing import List
 
+from .cli import parse_arguments
+from .cmds import env_export
+
 
 def turbo_command(arguments: List[str]):
+    args = parse_arguments(arguments)
+    if args.cmd == "export":
+        return env_export(args)
 
-    parser = ArgumentParser()
-    add_parser_prefix(parser)
-
-    args = parser.parse_args(arguments)
-    print(args)
-
-    from conda.base.context import context, determine_target_prefix, env_name
-    from .env import from_environment
-    prefix = determine_target_prefix(context, args)
-    env = from_environment(
-        env_name(prefix),
-        prefix,
-        #no_builds=args.no_builds,
-        #ignore_channels=args.ignore_channels,
-        #from_history=args.from_history,
-    )
-    breakpoint()
-    print(env.to_yaml())
 
 @plugins.hookimpl
 def conda_subcommands():
