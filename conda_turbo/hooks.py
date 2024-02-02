@@ -8,7 +8,7 @@ from .env import from_environment
 from typing import List
 
 from .cli import parse_arguments
-from .cmds import env_export
+from .cmd_export import env_export
 
 
 def turbo_command(arguments: List[str]):
