@@ -35,6 +35,7 @@ def configure_parser(parser: ArgumentParser) -> ArgumentParser:
         help="Do not include additional fields in the output, only base fields"
     )
     export_parser.set_defaults(func="conda_turbo.cli.main_env_export.execute")
+    create_parser.set_defaults(func="conda_turbo.cli.main_env_create.execute")
     parser.set_defaults(func="conda_turbo.cli.main_env.execute")
     return parser
 
