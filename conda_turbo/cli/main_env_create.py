@@ -19,6 +19,11 @@ def execute(args: Namespace, parser: ArgumentParser) -> int:
     from conda.misc import touch_nonadmin
     from conda.cli import install as cli_install
 
+    # Monkey patch to load with module which knows about additional fields
+    from conda_turbo.env import env as local_env
+    from conda.env.specs import yaml_file
+    yaml_file.env = local_env
+
     spec = specs.detect(
         name=args.name,
         filename=get_filename(args.file),
