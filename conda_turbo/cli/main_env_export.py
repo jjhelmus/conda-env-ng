@@ -1,12 +1,17 @@
+# Copyright (C) 2012 Anaconda, Inc
+# SPDX-License-Identifier: BSD-3-Clause
+"""CLI implementation for `conda env-ng export`.
+
+Dumps specified environment package specifications to the screen.
+"""
 from argparse import Namespace, ArgumentParser
 
-from conda.base.context import context, determine_target_prefix, env_name
-from conda.cli.common import stdout_json
-
-from .env import from_environment
 
 # modified from conda.cli.main_env_export.py::execute
-def execute(args: Namespace, parser: ArgumentParser):
+def execute(args: Namespace, parser: ArgumentParser) -> int:
+    from conda.base.context import context, determine_target_prefix, env_name
+    from ..env import from_environment
+    from conda.cli.common import stdout_json
     prefix = determine_target_prefix(context, args)
     env = from_environment(
         env_name(prefix),
