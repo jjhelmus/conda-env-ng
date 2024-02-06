@@ -23,7 +23,7 @@ dependencies = [
 ]
 
 [project.entry-points.conda]
-conda-solve = "conda_turbo.hooks"
+conda-turbo = "conda_turbo.hooks"
 
 [tool.setuptools]
 packages = ["conda_turbo"]

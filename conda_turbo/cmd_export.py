@@ -1,11 +1,12 @@
-from argparse import Namespace
+from argparse import Namespace, ArgumentParser
 
 from conda.base.context import context, determine_target_prefix, env_name
 from conda.cli.common import stdout_json
 
 from .env import from_environment
 
-def env_export(args: Namespace):
+# modified from conda.cli.main_env_export.py::execute
+def execute(args: Namespace, parser: ArgumentParser):
     prefix = determine_target_prefix(context, args)
     env = from_environment(
         env_name(prefix),
