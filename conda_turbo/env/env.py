@@ -1,6 +1,6 @@
 # Copyright (C) 2012 Anaconda, Inc
 # SPDX-License-Identifier: BSD-3-Clause
-"""EnvironmentPP object describing the conda environmentPP.yaml file."""
+"""Environment object describing the conda environmentPP.yaml file."""
 import json
 import os
 import re
@@ -67,7 +67,7 @@ def from_environment(
     name, prefix, no_builds=False, ignore_channels=False, from_history=False
 ):
     """
-        Get ``EnvironmentPP`` object from prefix
+        Get ``Environment`` object from prefix
     Args:
         name: The name of environment
         prefix: The path of prefix
@@ -75,7 +75,7 @@ def from_environment(
         ignore_channels: whether ignore_channels
         from_history: Whether environmentPP file should be based on explicit specs in history
 
-    Returns:     EnvironmentPP object
+    Returns:     Environment object
     """
     # requested_specs_map = History(prefix).get_requested_specs_map()
     pd = PrefixData(prefix, pip_interop_enabled=True)
@@ -88,7 +88,7 @@ def from_environment(
     if from_history:
         history = History(prefix).get_requested_specs_map()
         deps = [str(package) for package in history.values()]
-        return EnvironmentPP(
+        return Environment(
             name=name,
             dependencies=deps,
             channels=list(context.channels),
@@ -132,7 +132,7 @@ def from_environment(
 
     explicit = [f"{prec.url}#{prec.md5}" for prec in precs]
 
-    return EnvironmentPP(
+    return Environment(
         name=name,
         dependencies=dependencies,
         channels=channels,
@@ -145,7 +145,7 @@ def from_environment(
 
 
 def from_yaml(yamlstr, **kwargs):
-    """Load and return a ``EnvironmentPP`` from a given ``yaml`` string"""
+    """Load and return a ``Environment`` from a given ``yaml`` string"""
     data = yaml_safe_load(yamlstr)
     filename = kwargs.get("filename")
     if data is None:
@@ -156,18 +156,18 @@ def from_yaml(yamlstr, **kwargs):
         for key, value in kwargs.items():
             data[key] = value
     _expand_channels(data)
-    return EnvironmentPP(**data)
+    return Environment(**data)
 
 
 def _expand_channels(data):
-    """Expands ``EnvironmentPP`` variables for the channels found in the ``yaml`` data"""
+    """Expands ``Environment`` variables for the channels found in the ``yaml`` data"""
     data["channels"] = [
         os.path.expandvars(channel) for channel in data.get("channels", [])
     ]
 
 
 def from_file(filename):
-    """Load and return an ``EnvironmentPP`` from a given file"""
+    """Load and return an ``Environment`` from a given file"""
     url_scheme = filename.split("://", 1)[0]
     if url_scheme in CONDA_SESSION_SCHEMES:
         yamlstr = download_text(filename)
@@ -212,12 +212,12 @@ class Dependencies(dict):
 
     # TODO only append when it's not already present
     def add(self, package_name):
-        """Add a package to the ``EnvironmentPP``"""
+        """Add a package to the ``Environment``"""
         self.raw.append(package_name)
         self.parse()
 
 
-class EnvironmentPP:
+class Environment:
     """A class representing an ``environmentPP.yaml`` file"""
 
     def __init__(
@@ -246,15 +246,15 @@ class EnvironmentPP:
         self.channels = channels
 
     def add_channels(self, channels):
-        """Add channels to the ``EnvironmentPP``"""
+        """Add channels to the ``Environment``"""
         self.channels = list(unique(chain.from_iterable((channels, self.channels))))
 
     def remove_channels(self):
-        """Remove all channels from the ``EnvironmentPP``"""
+        """Remove all channels from the ``Environment``"""
         self.channels = []
 
     def to_dict(self, stream=None):
-        """Convert information related to the ``EnvironmentPP`` into a dictionary"""
+        """Convert information related to the ``Environment`` into a dictionary"""
         d = {"name": self.name}
         if self.channels:
             d["channels"] = self.channels
@@ -275,14 +275,14 @@ class EnvironmentPP:
         stream.write(json.dumps(d))
 
     def to_yaml(self, stream=None):
-        """Convert information related to the ``EnvironmentPP`` into a ``yaml`` string"""
+        """Convert information related to the ``Environment`` into a ``yaml`` string"""
         d = self.to_dict()
         out = yaml_safe_dump(d, stream)
         if stream is None:
             return out
 
     def save(self):
-        """Save the ``EnvironmentPP`` data to a ``yaml`` file"""
+        """Save the ``Environment`` data to a ``yaml`` file"""
         with open(self.filename, "wb") as fp:
             self.to_yaml(stream=fp)
 

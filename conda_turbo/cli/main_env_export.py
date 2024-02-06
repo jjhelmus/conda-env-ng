@@ -10,7 +10,7 @@ from argparse import Namespace, ArgumentParser
 # modified from conda.cli.main_env_export.py::execute
 def execute(args: Namespace, parser: ArgumentParser) -> int:
     from conda.base.context import context, determine_target_prefix, env_name
-    from ..env import from_environment
+    from ..env.env import from_environment
     from conda.cli.common import stdout_json
     prefix = determine_target_prefix(context, args)
     env = from_environment(
