@@ -29,6 +29,11 @@ def configure_parser(parser: ArgumentParser) -> ArgumentParser:
     update_parser = main_env_update.configure_parser(env_parsers)
 
     # conda env-ng specific
+    export_parser.add_argument(
+        "--no-additional-fields",
+        action="store_true",
+        help="Do not include additional fields in the output, only base fields"
+    )
     export_parser.set_defaults(func="conda_turbo.cli.main_env_export.execute")
     parser.set_defaults(func="conda_turbo.cli.main_env.execute")
     return parser

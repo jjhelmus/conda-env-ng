@@ -64,7 +64,7 @@ def validate_keys(data, kwargs):
 
 
 def from_environment(
-    name, prefix, no_builds=False, ignore_channels=False, from_history=False
+    name, prefix, no_builds=False, ignore_channels=False, from_history=False, only_base_fields=False,
 ):
     """
         Get ``Environment`` object from prefix
@@ -73,13 +73,13 @@ def from_environment(
         prefix: The path of prefix
         no_builds: Whether has build requirement
         ignore_channels: whether ignore_channels
-        from_history: Whether environmentPP file should be based on explicit specs in history
+        from_history: Whether environment file should be based on explicit specs in history
+        only_base_fields: If only the base fields should be included in output functions
 
     Returns:     Environment object
     """
     # requested_specs_map = History(prefix).get_requested_specs_map()
     pd = PrefixData(prefix, pip_interop_enabled=True)
-    #breakpoint()
     variables = pd.get_environment_env_vars()
 
     history = History(prefix).get_requested_specs_map()
@@ -94,6 +94,7 @@ def from_environment(
             channels=list(context.channels),
             prefix=prefix,
             variables=variables,
+            only_base_fields=only_base_fields,
         )
 
     precs = tuple(PrefixGraph(pd.iter_records()).graph)
@@ -141,6 +142,7 @@ def from_environment(
         subdir=context.subdir,  # how to detect non-native environments?
         requested=requested,
         explicit=explicit,
+        only_base_fields=only_base_fields,
     )
 
 
@@ -231,6 +233,7 @@ class Environment:
         subdir=None,
         requested=None,
         explicit=None,
+        only_base_fields=False,
     ):
         self.name = name
         self.filename = filename
@@ -240,6 +243,7 @@ class Environment:
         self.subdir = subdir
         self.requested = requested
         self.explicit = explicit
+        self.only_base_fields = only_base_fields
 
         if channels is None:
             channels = []
@@ -264,11 +268,11 @@ class Environment:
             d["variables"] = self.variables
         if self.prefix:
             d["prefix"] = self.prefix
-        if self.subdir:
+        if self.subdir and not self.only_base_fields:
             d["subdir"] = self.subdir
-        if self.requested:
+        if self.requested and not self.only_base_fields:
             d["requested"] = self.requested
-        if self.explicit:
+        if self.explicit and not self.only_base_fields:
             d["explicit"] = self.explicit
         if stream is None:
             return d

@@ -19,6 +19,7 @@ def execute(args: Namespace, parser: ArgumentParser) -> int:
         no_builds=args.no_builds,
         ignore_channels=args.ignore_channels,
         from_history=args.from_history,
+        only_base_fields=args.no_additional_fields,
     )
 
     if args.override_channels:
