@@ -35,8 +35,44 @@ def configure_parser(parser: ArgumentParser) -> ArgumentParser:
         help="Do not include additional fields in the output, only base fields"
     )
     export_parser.set_defaults(func="conda_turbo.cli.main_env_export.execute")
+
+    env_field_group = create_parser.add_argument_group(
+        "Environment Field",
+        "The field from the environment.yaml file that is used to create the environment."
+    )
+    exclusive_field_group = env_field_group.add_mutually_exclusive_group()
+    exclusive_field_group.add_argument(
+        "--from-explicit",
+        action="store_const",
+        const="explicit",
+        dest="env_field",
+        help="The explicit field."
+    )
+    exclusive_field_group.add_argument(
+        "--from-requested",
+        action="store_const",
+        const="requested",
+        dest="env_field",
+        help="The requested field."
+    )
+    exclusive_field_group.add_argument(
+        "--from-dependencies",
+        action="store_const",
+        const="dependencies",
+        dest="env_field",
+        help="The dependencies field."
+    )
+
     create_parser.set_defaults(func="conda_turbo.cli.main_env_create.execute")
     parser.set_defaults(func="conda_turbo.cli.main_env.execute")
+    """
+        If the environment.yaml file contains additional fields (subdir, requested and explicit)
+        then the explicit environment will be created when the environment described an environment
+        from the same platform. Otherwise the requested specification will be used. This behavior
+        be modified using the --from-* options.
+
+        Note that default packages are not installed into explicit environments.
+    """
     return parser
 
 
