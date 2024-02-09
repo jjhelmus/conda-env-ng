@@ -21,7 +21,7 @@ from conda.models.enums import PackageType
 from conda.models.match_spec import MatchSpec
 from conda.models.prefix_graph import PrefixGraph
 
-VALID_KEYS = ("name", "dependencies", "prefix", "channels", "variables")
+VALID_KEYS = ("name", "dependencies", "prefix", "channels", "variables", "subdir", "requested", "explicit")
 
 
 def validate_keys(data, kwargs):
@@ -284,6 +284,14 @@ class Environment:
         out = yaml_safe_dump(d, stream)
         if stream is None:
             return out
+
+    @property
+    def has_additional_fields(self) -> bool:
+        return (
+            self.requested is not None and
+            self.subdir is not None and
+            self.explicit is not None
+        )
 
     def save(self):
         """Save the ``Environment`` data to a ``yaml`` file"""
