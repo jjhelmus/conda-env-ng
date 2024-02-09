@@ -24,6 +24,12 @@ def execute(args: Namespace, parser: ArgumentParser) -> int:
     from conda.env.specs import yaml_file
     yaml_file.env = local_env
 
+    # Monkey patch binstar
+    from conda_turbo.env.env import Environment, from_yaml
+    from conda.env.specs import binstar
+    binstar.Environment = Environment
+    binstar.from_yaml = from_yaml
+
     spec = specs.detect(
         name=args.name,
         filename=get_filename(args.file),
