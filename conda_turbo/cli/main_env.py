@@ -36,6 +36,11 @@ def configure_parser(parser: ArgumentParser) -> ArgumentParser:
     )
     export_parser.set_defaults(func="conda_turbo.cli.main_env_export.execute")
 
+    create_parser.add_argument(
+        "--no-solve",
+        action="store_true",
+        help="Do not solve the environment, determine from package details, can fail."
+    )
     env_field_group = create_parser.add_argument_group(
         "Environment Field",
         "The field from the environment.yaml file that is used to create the environment."

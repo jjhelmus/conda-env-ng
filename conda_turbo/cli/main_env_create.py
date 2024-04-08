@@ -52,8 +52,13 @@ def execute(args: Namespace, parser: ArgumentParser) -> int:
     # TODO, add capability
     # common.ensure_override_channels_requires_channel(args)
     # channel_urls = args.channel or ()
-
     result = {"conda": None, "pip": None}
+
+    if args.no_solve:
+        from ..no_solve import no_solve_install
+        no_solve_install(env, prefix)
+        print_result(args, prefix, result)
+        return
 
     args_packages = (
         context.create_default_packages if not args.no_default_packages else []
